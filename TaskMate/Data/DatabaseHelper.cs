@@ -12,7 +12,24 @@ namespace TaskMate.Data
             _connectionString = connectionString;
         }
 
-        public List<Job> GetJob()
+        public bool TestConnection()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    connection.Open();  // Try opening the connection
+                    return true;  // Return true if the connection is successful
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");  // Log the error message
+                return false;  // Return false if there's an error
+            }
+        }
+
+        public List<Job> GetJobs()
         {
             List<Job> jobs = new List<Job>();
             string query = "SELECT Id, Title, Description, StartTime, EndTime, StatusId, PriorityId, UserId FROM Jobs";
