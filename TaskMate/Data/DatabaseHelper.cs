@@ -5,18 +5,18 @@ namespace TaskMate.Data
 {
     public class DatabaseHelper
     {
-        private readonly string _connectionString;
+        private readonly string _connectionStrings;
 
-        public DatabaseHelper(string connectionString)
+        public DatabaseHelper(string connectionStrings)
         {
-            _connectionString = connectionString;
+            _connectionStrings = connectionStrings;
         }
 
         public bool TestConnection()
         {
             try
             {
-                using (var connection = new SqlConnection(_connectionString))
+                using (var connection = new SqlConnection(_connectionStrings))
                 {
                     connection.Open();  // Try opening the connection
                     return true;  // Return true if the connection is successful
@@ -34,7 +34,7 @@ namespace TaskMate.Data
             List<Job> jobs = new List<Job>();
             string query = "SELECT Id, Title, Description, StartTime, EndTime, StatusId, PriorityId, UserId FROM Jobs";
 
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new SqlConnection(_connectionStrings))
             {
                 SqlCommand sqlCommand = new SqlCommand(query, connection); 
                 connection.Open();
