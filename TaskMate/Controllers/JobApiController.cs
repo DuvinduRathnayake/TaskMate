@@ -9,10 +9,8 @@ namespace TaskMate.Controllers
     {
         private readonly DatabaseHelper _databaseHelper;
 
-        public JobApiController(DatabaseHelper databaseHelper)
-        {
-            _databaseHelper = databaseHelper;
-        }
+        //Constructor 
+        public JobApiController(DatabaseHelper databaseHelper) => _databaseHelper = databaseHelper;
 
         [HttpGet]
         public IActionResult GetJobs()
@@ -34,5 +32,6 @@ namespace TaskMate.Controllers
                 return NotFound("No Jobs Found");
             }
         }
+
     }
 }
