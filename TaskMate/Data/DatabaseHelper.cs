@@ -1,5 +1,7 @@
 ﻿using System.Data.SqlClient;
 using TaskMate.Models;
+using Dapper;
+using TaskMate.DTOs;
 
 namespace TaskMate.Data
 {
@@ -18,14 +20,14 @@ namespace TaskMate.Data
             {
                 using (var connection = new SqlConnection(_connectionStrings))
                 {
-                    connection.Open();  // Try opening the connection
-                    return true;  // Return true if the connection is successful
+                    connection.Open();  
+                    return true;  
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");  // Log the error message
-                return false;  // Return false if there's an error
+                Console.WriteLine($"Error: {ex.Message}");  
+                return false;  
             }
         }
 
@@ -61,5 +63,28 @@ namespace TaskMate.Data
 
             return jobs;
         }
+
+        public async Task<int> CraeteJobAsync(CreateJobDto dto)
+        {
+            const string sql = @"
+                               INSERT INTO Jobs (Title, Description, StartTime, EndTime, StatusId, PriorityId, UserId)
+                               OUTPUT INSERTED.Id
+                               VALUES (@Title, @Description, @StartTime, @EndTime, @StatusId, @PriorityId, @UserId);";
+
+            await using var conn = new SqlConnection(_connectionStrings);
+            await conn.OpenAsync();
+            return await conn.ExecuteScalarAsync<int>(sql,dto); ;
+        }
+
+        public async Task<Job?> GetJobAsync(int id)
+        {
+            const string sql = "SELECT * FROM Jobs WHERE Id = @Id";
+
+            await using var conn = new SqlConnection(_connectionStrings);
+            await conn.OpenAsync();
+
+            return await conn.QueryFirstOrDefaultAsync<Job>(sql, new { Id = id });
+        }
+
     }
 }
