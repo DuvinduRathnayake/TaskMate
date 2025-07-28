@@ -32,10 +32,73 @@ Make sure you have the following installed before you start:
 - [Node.js](https://nodejs.org/en/) (for React development)
 - [Git](https://git-scm.com/)
 
-### Setup
+Setup
+1. Clone the Repository
+Start by cloning the repository to your local machine:
 
-#### Clone the Repository
-
-```bash
+bash
+Copy
 git clone https://github.com/yourusername/taskmate.git
 cd taskmate
+2. Set Up the Backend
+Open the TaskMate folder in your terminal.
+
+Navigate to the backend project directory (where the .csproj file is located).
+
+Run the following commands to restore dependencies and start the application:
+
+bash
+Copy
+dotnet restore
+dotnet run
+3. Set Up the Frontend
+Navigate to the frontend directory (where the React app is located).
+
+Run the following commands to install the required dependencies and start the development server:
+
+bash
+Copy
+cd client
+npm install
+npm start
+This will open the application at http://localhost:3000 in your browser.
+
+4. Set Up the Database
+If you’re using SQL Server locally, make sure it’s running and accessible.
+
+Create a new database called taskmate_db and configure the connection string in the backend’s appsettings.json file:
+
+json
+Copy
+"ConnectionStrings": {
+  "TaskMateDb": "Server=localhost;Database=taskmate_db;Trusted_Connection=True;"
+}
+Run the database migration to create the necessary tables:
+
+bash
+Copy
+dotnet ef database update
+5. Access the Application
+After following the above steps, open the app in your browser:
+
+Frontend: http://localhost:3000
+
+Backend: http://localhost:5000 (if using the default port)
+
+Features Demo
+Create Task: Add new tasks with descriptions and deadlines.
+
+Update Task: Edit task details or mark tasks as completed.
+
+Delete Task: Remove tasks that are no longer needed.
+
+Login/Signup: Users can register, log in, and manage their accounts.
+
+Running Tests (Optional)
+If you want to run unit tests for the backend, use the following command in the backend project directory:
+
+bash
+Copy
+dotnet test
+Contributions
+Feel free to fork the repository, submit issues, or contribute pull requests. Your contributions are welcome!
