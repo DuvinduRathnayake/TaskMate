@@ -68,6 +68,33 @@ namespace TaskMate.Controllers
             return job is null ? NotFound() : Ok(job);
         }
 
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateJob(int id, [FromBody] UpdateJobDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Check if the job exists
+            var existingJob = await _databaseHelper.GetJobAsync(id);
+            if (existingJob == null)
+            {
+                return NotFound($"Job with ID {id} not found.");
+            }
+
+            // Update the job in the database
+            bool isUpdated = await _databaseHelper.UpdateJobAsync(id, dto);
+
+            if (isUpdated)
+            {
+                return NoContent(); // Successfully updated
+            }
+
+            return StatusCode(500, "Failed to update the job.");
+        }
+
+
 
 
     }

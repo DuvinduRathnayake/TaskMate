@@ -86,5 +86,38 @@ namespace TaskMate.Data
             return await conn.QueryFirstOrDefaultAsync<Job>(sql, new { Id = id });
         }
 
+        public async Task<bool> UpdateJobAsync(int id, UpdateJobDto dto)
+        {
+            const string sql = @"
+        UPDATE Jobs
+        SET Title = @Title,
+            Description = @Description,
+            StartTime = @StartTime,
+            EndTime = @EndTime,
+            StatusId = @StatusId,
+            PriorityId = @PriorityId,
+            UserId = @UserId
+        WHERE Id = @Id";
+
+            await using var conn = new SqlConnection(_connectionStrings);
+            await conn.OpenAsync();
+
+            var result = await conn.ExecuteAsync(sql, new
+            {
+                dto.Title,
+                dto.Description,
+                dto.StartTime,
+                dto.EndTime,
+                dto.StatusId,
+                dto.PriorityId,
+                dto.UserId,
+                Id = id
+            });
+
+            return result > 0; // If rows are affected, return true
+        }
+
+
+
     }
 }
