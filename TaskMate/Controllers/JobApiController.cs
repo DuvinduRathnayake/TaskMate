@@ -95,6 +95,28 @@ namespace TaskMate.Controllers
         }
 
 
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteJob(int id)
+        {
+            // Check if the job exists first
+            var existingJob = await _databaseHelper.GetJobAsync(id);
+            if (existingJob == null)
+            {
+                return NotFound($"Job with ID {id} not found.");
+            }
+
+            // Try to delete the job
+            bool isDeleted = await _databaseHelper.DeleteJobAsync(id);
+
+            if (isDeleted)
+            {
+                return NoContent(); // 204 - Successfully deleted
+            }
+
+            return StatusCode(500, "Failed to delete the job.");
+        }
+
+
 
 
     }

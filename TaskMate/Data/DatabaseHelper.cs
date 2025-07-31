@@ -117,6 +117,18 @@ namespace TaskMate.Data
             return result > 0; // If rows are affected, return true
         }
 
+        public async Task<bool> DeleteJobAsync(int id)
+        {
+            string query = "DELETE FROM Jobs WHERE Id = @Id";
+
+            using (var connection = new SqlConnection(_connectionStrings))
+            {
+                var result = await connection.ExecuteAsync(query, new { Id = id });
+                return result > 0;
+            }
+        }
+
+
 
 
     }
