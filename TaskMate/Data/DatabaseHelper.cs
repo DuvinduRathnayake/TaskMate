@@ -14,20 +14,26 @@ namespace TaskMate.Data
             _connectionStrings = connectionStrings;
         }
 
+        // ✅ Expose the connection string for repositories
+        public string ConnectionString => _connectionStrings;
+
+        // ✅ Optional convenience: create a connection on demand
+        public SqlConnection CreateConnection() => new SqlConnection(_connectionStrings);
+
         public bool TestConnection()
         {
             try
             {
                 using (var connection = new SqlConnection(_connectionStrings))
                 {
-                    connection.Open();  
-                    return true;  
+                    connection.Open();
+                    return true;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");  
-                return false;  
+                Console.WriteLine($"Error: {ex.Message}");
+                return false;
             }
         }
 
@@ -38,7 +44,7 @@ namespace TaskMate.Data
 
             using (var connection = new SqlConnection(_connectionStrings))
             {
-                SqlCommand sqlCommand = new SqlCommand(query, connection); 
+                SqlCommand sqlCommand = new SqlCommand(query, connection);
                 connection.Open();
 
                 using (var reader = sqlCommand.ExecuteReader())
@@ -64,16 +70,17 @@ namespace TaskMate.Data
             return jobs;
         }
 
-        public async Task<int> CraeteJobAsync(CreateJobDto dto)
+        // Keeping your existing async CRUD helpers (we're not using them in MVC-only yet)
+        public async Task<int> CraeteJobAsync(CreateJobDto dto) // note: method name kept as-is to avoid breaking callers
         {
             const string sql = @"
-                               INSERT INTO Jobs (Title, Description, StartTime, EndTime, StatusId, PriorityId, UserId)
-                               OUTPUT INSERTED.Id
-                               VALUES (@Title, @Description, @StartTime, @EndTime, @StatusId, @PriorityId, @UserId);";
+                INSERT INTO Jobs (Title, Description, StartTime, EndTime, StatusId, PriorityId, UserId)
+                OUTPUT INSERTED.Id
+                VALUES (@Title, @Description, @StartTime, @EndTime, @StatusId, @PriorityId, @UserId);";
 
             await using var conn = new SqlConnection(_connectionStrings);
             await conn.OpenAsync();
-            return await conn.ExecuteScalarAsync<int>(sql,dto); ;
+            return await conn.ExecuteScalarAsync<int>(sql, dto);
         }
 
         public async Task<Job?> GetJobAsync(int id)
@@ -89,15 +96,15 @@ namespace TaskMate.Data
         public async Task<bool> UpdateJobAsync(int id, UpdateJobDto dto)
         {
             const string sql = @"
-        UPDATE Jobs
-        SET Title = @Title,
-            Description = @Description,
-            StartTime = @StartTime,
-            EndTime = @EndTime,
-            StatusId = @StatusId,
-            PriorityId = @PriorityId,
-            UserId = @UserId
-        WHERE Id = @Id";
+                UPDATE Jobs
+                SET Title = @Title,
+                    Description = @Description,
+                    StartTime = @StartTime,
+                    EndTime = @EndTime,
+                    StatusId = @StatusId,
+                    PriorityId = @PriorityId,
+                    UserId = @UserId
+                WHERE Id = @Id";
 
             await using var conn = new SqlConnection(_connectionStrings);
             await conn.OpenAsync();
@@ -114,7 +121,7 @@ namespace TaskMate.Data
                 Id = id
             });
 
-            return result > 0; // If rows are affected, return true
+            return result > 0;
         }
 
         public async Task<bool> DeleteJobAsync(int id)
@@ -127,9 +134,5 @@ namespace TaskMate.Data
                 return result > 0;
             }
         }
-
-
-
-
     }
 }

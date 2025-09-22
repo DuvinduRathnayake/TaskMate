@@ -1,0 +1,35 @@
+﻿@model IEnumerable<TaskMate.Models.Job>
+
+<div class="max-w-5xl mx-auto p-6">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-semibold">Jobs</h1>
+        <a class="px-4 py-2 rounded-2xl shadow border" asp-action="Create">New Job</a>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="border-b">
+                    <th class="py-3 pr-4">Title</th>
+                    <th class="py-3 pr-4">StatusId</th>
+                    <th class="py-3 pr-4">PriorityId</th>
+                    <th class="py-3 pr-4"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var j in Model)
+                {
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="py-3 pr-4">@j.Title</td>
+                        <td class="py-3 pr-4">@j.StatusId</td>
+                        <td class="py-3 pr-4">@j.PriorityId</td>
+                        <td class="py-3 pr-4 space-x-2">
+                            <a class="underline" asp-action="Edit" asp-route-id="@j.Id">Edit</a>
+                            <a class="underline text-red-600" asp-action="Delete" asp-route-id="@j.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
