@@ -56,7 +56,7 @@ namespace TaskMate.Data
 
         public async Task<int> CreateAsync(Job job)
         {
-            // simple defaults so the form can be minimal
+            // Safe defaults so a Title-only form can save
             if (job.StartTime == default) job.StartTime = DateTime.UtcNow;
             if (job.EndTime == default || job.EndTime < job.StartTime)
                 job.EndTime = job.StartTime.AddHours(1);
@@ -84,6 +84,99 @@ namespace TaskMate.Data
             var idObj = await cmd.ExecuteScalarAsync();
             return Convert.ToInt32(idObj);
         }
+
+
+        public async Task<Job?> GetByIdAsync(int id)
+    {
+        const string sql = @"
+        SELECT Id, Title, Description, StartTime, EndTime, PriorityId, StatusId, UserId
+        FROM Jobs
+        WHERE Id = @Id;";
+
+        using var conn = new SqlConnection(_db.ConnectionString);
+        await conn.OpenAsync();
+
+        using var cmd = new SqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@Id", id);
+
+        using var reader = await cmd.ExecuteReaderAsync();
+        if (!await reader.ReadAsync()) return null;
+
+        return new Job
+        {
+            Id = reader.GetInt32(0),
+            Title = reader.GetString(1),
+            Description = reader.IsDBNull(2) ? null : reader.GetString(2),
+            StartTime = reader.GetDateTime(3),
+            EndTime = reader.GetDateTime(4),
+            PriorityId = reader.GetInt32(5),
+            StatusId = reader.GetInt32(6),
+            UserId = reader.GetInt32(7)
+        };
+    }
+
+    public async Task<bool> UpdateAsync(int id, Job job)
+    {
+        if (job.EndTime < job.StartTime)
+            job.EndTime = job.StartTime; // minimal guard
+
+        const string sql = @"
+        UPDATE Jobs
+        SET Title=@Title,
+            Description=@Description,
+            StartTime=@StartTime,
+            EndTime=@EndTime,
+            StatusId=@StatusId,
+            PriorityId=@PriorityId,
+            UserId=@UserId
+        WHERE Id=@Id;";
+
+        using var conn = new SqlConnection(_db.ConnectionString);
+        await conn.OpenAsync();
+
+        using var cmd = new SqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@Id", id);
+        cmd.Parameters.AddWithValue("@Title", job.Title);
+        cmd.Parameters.AddWithValue("@Description", (object?)job.Description ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@StartTime", job.StartTime);
+        cmd.Parameters.AddWithValue("@EndTime", job.EndTime);
+        cmd.Parameters.AddWithValue("@StatusId", job.StatusId);
+        cmd.Parameters.AddWithValue("@PriorityId", job.PriorityId);
+        cmd.Parameters.AddWithValue("@UserId", job.UserId);
+
+        var rows = await cmd.ExecuteNonQueryAsync();
+        return rows > 0;
+    }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            using var conn = new SqlConnection(_db.ConnectionString);
+            await conn.OpenAsync();
+
+            using var tx = conn.BeginTransaction();
+
+            // 1) Delete dependent rows
+            using (var cmdAssign = new SqlCommand(
+                "DELETE FROM JobAssignments WHERE JobId = @Id;", conn, tx))
+            {
+                cmdAssign.Parameters.AddWithValue("@Id", id);
+                await cmdAssign.ExecuteNonQueryAsync();
+            }
+
+            // 2) Delete the Job
+            int rows;
+            using (var cmdJob = new SqlCommand(
+                "DELETE FROM Jobs WHERE Id = @Id;", conn, tx))
+            {
+                cmdJob.Parameters.AddWithValue("@Id", id);
+                rows = await cmdJob.ExecuteNonQueryAsync();
+            }
+
+            tx.Commit();
+            return rows > 0;
+        }
+
+
 
     }
 }

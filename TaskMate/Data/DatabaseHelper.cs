@@ -14,10 +14,8 @@ namespace TaskMate.Data
             _connectionStrings = connectionStrings;
         }
 
-        // ✅ Expose the connection string for repositories
         public string ConnectionString => _connectionStrings;
 
-        // ✅ Optional convenience: create a connection on demand
         public SqlConnection CreateConnection() => new SqlConnection(_connectionStrings);
 
         public bool TestConnection()
@@ -69,8 +67,6 @@ namespace TaskMate.Data
 
             return jobs;
         }
-
-        // Keeping your existing async CRUD helpers (we're not using them in MVC-only yet)
         public async Task<int> CraeteJobAsync(CreateJobDto dto) // note: method name kept as-is to avoid breaking callers
         {
             const string sql = @"
