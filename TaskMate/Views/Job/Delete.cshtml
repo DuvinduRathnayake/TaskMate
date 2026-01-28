@@ -1,0 +1,14 @@
+﻿@model TaskMate.Models.Job
+@{
+    ViewData["Title"] = "Delete Job";
+}
+<div class="max-w-xl mx-auto p-6 space-y-4">
+    <h1 class="text-xl font-semibold">Delete Job</h1>
+    <p>Are you sure you want to delete <strong>@Model.Title</strong>?</p>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="px-4 py-2 rounded border">Delete</button>
+        <a asp-action="Index" class="ml-2 px-4 py-2 rounded border">Cancel</a>
+    </form>
+</div>

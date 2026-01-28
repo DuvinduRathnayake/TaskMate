@@ -12,7 +12,9 @@ builder.Services.AddSingleton<DatabaseHelper>(sp =>
 
 builder.Services.AddControllersWithViews();
 // Add services to the container for controllers (API)
-builder.Services.AddControllers();  // No need for AddControllersWithViews if it's just API
+/*builder.Services.AddControllers();*/  // No need for AddControllersWithViews if it's just API
+builder.Services.AddScoped<IJobRepository, JobRepository>();
+
 
 var app = builder.Build();
 
@@ -35,6 +37,6 @@ app.UseAuthorization();  // Optional, based on whether you're using authenticati
 // Default route for HomeController (optional if you're using MVC)
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Job}/{action=Index}/{id?}");
 
 app.Run();

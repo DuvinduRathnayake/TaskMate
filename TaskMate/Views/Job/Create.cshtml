@@ -1,0 +1,20 @@
+﻿@model TaskMate.Models.Job
+
+<div class="max-w-2xl mx-auto p-6 space-y-4">
+    <h1 class="text-xl font-semibold">Create Job</h1>
+
+    <form asp-action="Create" method="post" class="space-y-4">
+        <div asp-validation-summary="All" class="text-red-600"></div>  <!-- add this -->
+
+        <div>
+            <label class="block mb-1">Title</label>
+            <input asp-for="Title" class="w-full border rounded p-2" />
+            <span asp-validation-for="Title" class="text-red-600"></span>
+        </div>
+
+        <div class="flex gap-2">
+            <button type="submit" class="px-4 py-2 rounded border">Save</button>
+            <a asp-action="Index" class="px-4 py-2 rounded border">Cancel</a>
+        </div>
+    </form>
+</div>

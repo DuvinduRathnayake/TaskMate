@@ -2,10 +2,10 @@
 {
     public class JobAssignment
     {
-        public int JobId { get; set; }      // Foreign key to Job
-        public int UserId { get; set; }     // Foreign key to User
+        public int JobId { get; set; }
+        public int UserId { get; set; }
 
-        public Job Job { get; set; }        // Navigation property 
-        public User User { get; set; }
+        public Job? Job { get; set; }
+        public User? User { get; set; }
     }
 }

@@ -1,0 +1,34 @@
+﻿@model TaskMate.Models.Job
+@{
+    ViewData["Title"] = "Edit Job";
+}
+<div class="max-w-2xl mx-auto p-6 space-y-4">
+    <h1 class="text-xl font-semibold">Edit Job</h1>
+
+    <form asp-action="Edit" method="post" class="space-y-4">
+        <input type="hidden" asp-for="Id" />
+
+        <div>
+            <label class="block mb-1">Title</label>
+            <input asp-for="Title" class="w-full border rounded p-2" />
+            <span asp-validation-for="Title" class="text-red-600"></span>
+        </div>
+
+        <div>
+            <label class="block mb-1">Description</label>
+            <textarea asp-for="Description" class="w-full border rounded p-2"></textarea>
+        </div>
+
+        <!-- Keep fields so values round-trip (FKs/time are already valid on existing rows) -->
+        <input type="hidden" asp-for="StartTime" />
+        <input type="hidden" asp-for="EndTime" />
+        <input type="hidden" asp-for="StatusId" />
+        <input type="hidden" asp-for="PriorityId" />
+        <input type="hidden" asp-for="UserId" />
+
+        <div class="flex gap-2">
+            <button type="submit" class="px-4 py-2 rounded border">Update</button>
+            <a asp-action="Index" class="px-4 py-2 rounded border">Cancel</a>
+        </div>
+    </form>
+</div>
